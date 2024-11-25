@@ -116,8 +116,6 @@ params:
       dtype: *dtype
       device: *device
       seed: auto
-      # task_specified_metrics: ["is_success", "box_goal_pos_dist",
-      #                          "box_goal_rot_dist", "episode_energy"]
-      task_specified_metrics: ["Episode_Termination/success", "Episode_Reward/object_goal_position_distance",
-                               "Episode_Reward/object_goal_orientation_distance", "Episode_Reward/energy_cost"]
+      task_specified_metrics: ["is_success", "box_goal_pos_dist",
+                               "box_goal_rot_dist", "episode_energy"]
       mp: *mp
