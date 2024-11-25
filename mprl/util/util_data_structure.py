@@ -326,6 +326,45 @@ def get_item_from_dicts(dicts: Iterable[Dict], key: str,
             values.append(process(dictionary[key]))
     return values
 
+def get_item_from_dicts(dicts: Iterable[Dict], key: str, 
+                        process: Callable = lambda x: x) -> list:
+    """
+    Return the values from a collection of dictionaries, including nested dictionaries.
+
+    Args:
+        dicts: A collection of dictionaries in an iterable container.
+        key: The key to look for in the dictionaries.
+        process: A function applied to the value before including it in the result.
+
+    Returns:
+        A list of processed values corresponding to the specified key.
+    """
+    def search_in_dict(d: Dict, key: str) -> list:
+        """
+        Recursively search for the key in the dictionary and return values.
+
+        Args:
+            d: The dictionary to search.
+            key: The key to find.
+
+        Returns:
+            A list of values corresponding to the key.
+        """
+        results = []
+        for k, v in d.items():
+            if k == key:
+                results.append(process(v))
+            elif isinstance(v, dict):
+                results.extend(search_in_dict(v, key))
+        return results
+
+    values = []
+    for dictionary in dicts:
+        if isinstance(dictionary, dict):
+            values.extend(search_in_dict(dictionary, key))
+    return values
+
+
 
 def assert_shape(data, shape: list):
     """
