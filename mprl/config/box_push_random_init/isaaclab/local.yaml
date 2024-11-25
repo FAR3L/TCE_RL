@@ -1,7 +1,7 @@
 # cw2 config
-name: box_random_tcp_entire
+name: box_random_bbrl_isaaclab
 import_path: "./shared.yaml"
-import_exp: "box_random_tcp_entire"
+import_exp: "box_random_bbrl_isaaclab"
 
 repetitions: 1
 reps_per_job: 1
@@ -9,15 +9,8 @@ reps_in_parallel: 1
 iterations: &iterations 2500
 num_checkpoints: 1
 
-wandb:
-  log_interval: &log_interval 1
-  log_model: false
-
 # Hardware specific parameters
 params:
-  agent:
-    args:
-      evaluation_interval: 3
   sampler:
     args:
       num_env_train: 8

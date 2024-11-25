@@ -16,7 +16,7 @@ path: *exp_path
 wandb:
   project: *exp_name
   group: *sub_exp_name
-  entity: WANDB_USERNAME
+  entity: far3l_team
   log_interval: &log_interval 25
   log_model: true
   model_name: model
