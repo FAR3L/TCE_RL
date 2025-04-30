@@ -153,3 +153,6 @@ fancy_gymnasium/
 Git_Repos_Tracker/
 Metaworld/
 trust-region-layers/
+
+# outputs
+/outputs

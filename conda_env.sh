@@ -5,7 +5,7 @@ eval "$(conda shell.bash hook)"
 
 # Define environment name and Python version
 ENV_NAME=tce
-PYTHON_VERSION=3.8
+PYTHON_VERSION=3.10
 
 # Create a new conda environment
 echo "Creating a new conda environment named $ENV_NAME with Python $PYTHON_VERSION"
@@ -46,12 +46,12 @@ conda develop .
 
 # Download packages from Github
 
-# Fancy_Gym
-git clone -b tce_final --single-branch git@github.com:BruceGeLi/fancy_gymnasium.git
-cd fancy_gymnasium
-pip install -e .
-conda develop .
-cd ..
+# # Fancy_Gym
+# git clone -b tce_final --single-branch git@github.com:BruceGeLi/fancy_gymnasium.git
+# cd fancy_gymnasium
+# pip install -e .
+# conda develop .
+# cd ..
 
 # Trust_Region_Projection
 git clone -b TCE_ICLR24 --single-branch git@github.com:BruceGeLi/trust-region-layers.git
@@ -71,11 +71,34 @@ git clone -b tce_final --single-branch git@github.com:BruceGeLi/Metaworld.git
 cd Metaworld
 pip install -e .
 conda develop .
+cd ..
 
 # Install packages using pip
 echo "Installing packages with pip"
-pip install stable-baselines3==2.2.1
+pip install --upgrade pip
+# pip install stable-baselines3==2.2.1
+pip install warp-lang
+pip install torch==2.4.0 --index-url https://download.pytorch.org/whl/cu121
+pip install isaacsim isaacsim-rl isaacsim-replicator isaacsim-extscache-physics isaacsim-extscache-kit-sdk isaacsim-extscache-kit isaacsim-app --extra-index-url https://pypi.nvidia.com
+cd ..
+cd fancy_gym
+pip install -e .
+cd ..
+cd stable-baselines3
+pip install -e .
+cd ..
+cd pytorch_kinematics
+pip install -e .
+pip install arm_pytorch_utilities
+cd ..
+cd alr_tasks/exts/alr_isaaclab_tasks
+pip install -e .
+cd ../../../
 
+#Install IsaacLab
+cd IsaacLab
+./isaaclab.sh -i
+cd ..
 
 
 echo "Configuration completed successfully."

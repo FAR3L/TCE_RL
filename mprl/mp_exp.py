@@ -5,6 +5,10 @@ from cw2 import experiment
 from cw2.cw_data import cw_logging
 from tqdm import tqdm
 
+from omni.isaac.lab.app import AppLauncher
+
+app_launcher = AppLauncher(headless=True)
+
 import mprl.util as util
 from mprl.rl.agent import agent_factory
 from mprl.rl.critic import critic_factory
@@ -14,8 +18,9 @@ from mprl.rl.sampler import sampler_factory
 
 
 class MPExperiment(experiment.AbstractIterativeExperiment):
-    def initialize(self, cw_config: dict, rep: int,
-                   logger: cw_logging.LoggerArray) -> None:
+    def initialize(
+        self, cw_config: dict, rep: int, logger: cw_logging.LoggerArray
+    ) -> None:
 
         # Get experiment config
         cfg = cw_config["params"]
@@ -26,15 +31,16 @@ class MPExperiment(experiment.AbstractIterativeExperiment):
         self.verbose_level = cw_config.get("verbose_level", 1)
 
         # Determine training or testing mode
-        load_model_dir = cw_config.get('load_model_dir', None)
-        load_model_epoch = cw_config.get('load_model_epoch', None)
+        load_model_dir = cw_config.get("load_model_dir", None)
+        load_model_epoch = cw_config.get("load_model_epoch", None)
         self.training = True if load_model_dir is None else False
 
         if self.training and cw_config.get("save_model_dir", None) is not None:
             # Save model in training mode
             self.save_model_dir = os.path.abspath(cw_config["save_model_dir"])
-            self.save_model_interval = \
-                max(cw_config["iterations"] // cw_config["num_checkpoints"], 1)
+            self.save_model_interval = max(
+                cw_config["iterations"] // cw_config["num_checkpoints"], 1
+            )
 
         else:
             # In testing mode or no save model dir in training mode
@@ -42,27 +48,34 @@ class MPExperiment(experiment.AbstractIterativeExperiment):
             self.save_model_interval = None
 
         # Components
-        self.sampler = sampler_factory(cfg["sampler"]["type"],
-                                       cpu_cores=cpu_cores,
-                                       **cfg["sampler"]["args"])
-        self.policy = policy_factory(cfg["policy"]["type"],
-                                     dim_in=self.get_dim_in(cfg, self.sampler),
-                                     dim_out=self.dim_policy_out(cfg),
-                                     **cfg["policy"]["args"])
-        self.critic = critic_factory(cfg["critic"]["type"],
-                                     dim_in=self.get_dim_in(cfg, self.sampler),
-                                     dim_out=1,
-                                     **cfg["critic"]["args"])
-        self.projection = projection_factory(cfg["projection"]["type"],
-                                             action_dim=
-                                             self.dim_policy_out(cfg),
-                                             **cfg["projection"]["args"])
-        self.agent = agent_factory(cfg["agent"]["type"],
-                                   policy=self.policy,
-                                   critic=self.critic,
-                                   sampler=self.sampler,
-                                   projection=self.projection,
-                                   **cfg["agent"]["args"])
+        self.sampler = sampler_factory(
+            cfg["sampler"]["type"], cpu_cores=cpu_cores, **cfg["sampler"]["args"]
+        )
+        self.policy = policy_factory(
+            cfg["policy"]["type"],
+            dim_in=self.get_dim_in(cfg, self.sampler),
+            dim_out=self.dim_policy_out(cfg),
+            **cfg["policy"]["args"]
+        )
+        self.critic = critic_factory(
+            cfg["critic"]["type"],
+            dim_in=self.get_dim_in(cfg, self.sampler),
+            dim_out=1,
+            **cfg["critic"]["args"]
+        )
+        self.projection = projection_factory(
+            cfg["projection"]["type"],
+            action_dim=self.dim_policy_out(cfg),
+            **cfg["projection"]["args"]
+        )
+        self.agent = agent_factory(
+            cfg["agent"]["type"],
+            policy=self.policy,
+            critic=self.critic,
+            sampler=self.sampler,
+            projection=self.projection,
+            **cfg["agent"]["args"]
+        )
 
         # Load model if it in testing mode
         if self.training:
@@ -98,13 +111,15 @@ class MPExperiment(experiment.AbstractIterativeExperiment):
             return deterministic_result_dict
 
     def save_state(self, cw_config: dict, rep: int, n: int) -> None:
-        if self.save_model_dir and ((n + 1) % self.save_model_interval == 0
-                                    or (n + 1) == cw_config["iterations"]):
+        if self.save_model_dir and (
+            (n + 1) % self.save_model_interval == 0
+            or (n + 1) == cw_config["iterations"]
+        ):
             self.agent.save_agent(log_dir=self.save_model_dir, epoch=n + 1)
 
-    def finalize(self,
-                 surrender: cw_error.ExperimentSurrender = None,
-                 crash: bool = False):
+    def finalize(
+        self, surrender: cw_error.ExperimentSurrender = None, crash: bool = False
+    ):
         pass
 
     @staticmethod
@@ -164,8 +179,7 @@ class MPExperiment(experiment.AbstractIterativeExperiment):
         return dim_out
 
 
-def evaluation(model_str: str, version_number: list, epoch: int,
-               keep_training: bool):
+def evaluation(model_str: str, version_number: list, epoch: int, keep_training: bool):
     """
     Given wandb model string, version, and epoch number, evaluate the model
     Args:
@@ -178,8 +192,7 @@ def evaluation(model_str: str, version_number: list, epoch: int,
         None
     """
     for v_num in version_number:
-        util.RLExperiment(MPExperiment, False, model_str, v_num, epoch,
-                          keep_training)
+        util.RLExperiment(MPExperiment, False, model_str, v_num, epoch, keep_training)
 
 
 if __name__ == "__main__":

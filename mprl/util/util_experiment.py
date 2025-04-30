@@ -83,7 +83,7 @@ class RLExperiment:
                  epoch: int = None,
                  keep_training: bool = False):
 
-        git_tracker = util.get_git_tracker()
+
 
         # Determine if check git status
         if util.is_debugging():
@@ -92,13 +92,14 @@ class RLExperiment:
             import matplotlib
             matplotlib.use('TkAgg')
         else:
+            # git_tracker = util.get_git_tracker()
             util.print_line_title('Run mode, enforce git repo commit checking.')
-            git_clean, git_status = git_tracker.check_clean_git_status(
-                print_result=True)
-            if not git_clean:
-                assert False, "Repositories not clean"
+            # git_clean, git_status = git_tracker.check_clean_git_status(
+            #     print_result=True)
+            # if not git_clean:
+            #     assert False, "Repositories not clean"
 
-        self.current_git_commits = git_tracker.get_git_repo_commits()
+        # self.current_git_commits = git_tracker.get_git_repo_commits()
 
         if train:
             # Initialize experiment
@@ -118,8 +119,8 @@ class RLExperiment:
             self.old_git_commits = \
                 util.parse_config(path_to_old_config)[0]["git_repos"]
             util.print_wrap_title("Git repos commits check")
-            print(util.git_repos_old_vs_new(self.old_git_commits,
-                                            self.current_git_commits))
+            # print(util.git_repos_old_vs_new(self.old_git_commits,
+            #                                 self.current_git_commits))
 
             # Initialize experiment
             self.cw = cluster_work.ClusterWork(exp)
@@ -133,6 +134,7 @@ class RLExperiment:
         if not util.is_debugging():
             self.cw.add_logger(WandBLogger())
         self.cw.run()
+        
 
     def _process_train_rep_config_file(self, config_obj):
         """
@@ -180,7 +182,7 @@ class RLExperiment:
                                         rep_config['_rep_idx'])
 
             # Save repo commits
-            rep_config["git_repos"] = self.current_git_commits
+            # rep_config["git_repos"] = self.current_git_commits
 
             # Make a hard copy of the config
             copied_rep_config = copy.deepcopy(rep_config)

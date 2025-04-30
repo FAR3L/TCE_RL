@@ -3,7 +3,7 @@ from .util_debug import *
 from .util_experiment import *
 from .util_file import *
 from .util_geometry import *
-from .util_git import *
+# from .util_git import *
 from .util_hyperparams import *
 from .util_learning import *
 from .util_matrix import *

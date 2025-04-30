@@ -1,6 +1,7 @@
 """
     Utilities of data type and structure
 """
+
 from typing import Callable
 from typing import Dict
 from typing import Iterable
@@ -34,7 +35,7 @@ def use_cpu():
     Returns:
         None
     """
-    torch.set_default_tensor_type('torch.FloatTensor')
+    torch.set_default_tensor_type("torch.FloatTensor")
     current_device.device = "cpu"
 
 
@@ -46,7 +47,7 @@ def use_cuda() -> bool:
         None
     """
     if torch.cuda.is_available():
-        torch.set_default_tensor_type('torch.cuda.FloatTensor')
+        torch.set_default_tensor_type("torch.cuda.FloatTensor")
         current_device.device = "cuda"
         # torch.multiprocessing.set_start_method(method="spawn")
 
@@ -78,8 +79,9 @@ def parse_dtype_device(dtype: str, device: str):
     return target_dtype, target_device
 
 
-def make_iterable(data: any, default: Literal['tuple', 'list'] = 'tuple') \
-        -> Union[Tuple, List]:
+def make_iterable(
+    data: any, default: Literal["tuple", "list"] = "tuple"
+) -> Union[Tuple, List]:
     """
     Make data a tuple or list, i.e. (data) or [data]
     Args:
@@ -93,10 +95,12 @@ def make_iterable(data: any, default: Literal['tuple', 'list'] = 'tuple') \
     elif isinstance(data, list):
         return data
     else:
-        if default == 'tuple':
+        if default == "tuple":
             return (data,)  # Do not use tuple()
-        elif default == 'list':
-            return [data, ]
+        elif default == "list":
+            return [
+                data,
+            ]
         else:
             raise NotImplementedError
 
@@ -110,12 +114,10 @@ def from_string_to_array(s: str) -> np.ndarray:
     Returns:
         1D numpy array
     """
-    return np.asarray(s[1:-1].split(),
-                      dtype=np.float64)
+    return np.asarray(s[1:-1].split(), dtype=np.float64)
 
 
-def to_np(tensor: Union[np.ndarray, torch.Tensor],
-          dtype=None) -> np.ndarray:
+def to_np(tensor: Union[np.ndarray, torch.Tensor], dtype=None) -> np.ndarray:
     """
     Transfer any type and device of tensor to a numpy ndarray
     Args:
@@ -154,9 +156,11 @@ def is_np(data: any) -> bool:
     return isinstance(data, np.ndarray)
 
 
-def to_ts(data: Union[int, float, np.ndarray, torch.Tensor],
-          dtype: torch.dtype = torch.float32,
-          device: torch.device = torch.device("cpu")) -> torch.Tensor:
+def to_ts(
+    data: Union[int, float, np.ndarray, torch.Tensor],
+    dtype: torch.dtype = torch.float32,
+    device: torch.device = torch.device("cpu"),
+) -> torch.Tensor:
     """
     Transfer any numerical input to a torch tensor in default data type + device
 
@@ -174,10 +178,11 @@ def to_ts(data: Union[int, float, np.ndarray, torch.Tensor],
     return torch.as_tensor(data, dtype=dtype, device=device)
 
 
-def to_tss(*datas: [Union[int, float, np.ndarray, torch.Tensor]],
-           dtype: torch.dtype = torch.float32,
-           device: str = "cpu") \
-        -> [torch.Tensor]:
+def to_tss(
+    *datas: [Union[int, float, np.ndarray, torch.Tensor]],
+    dtype: torch.dtype = torch.float32,
+    device: str = "cpu"
+) -> [torch.Tensor]:
     """
     transfer a list of any type of numerical input to a list of tensors in given
     data type and device
@@ -277,13 +282,15 @@ def maxpool2d_size_out(size: int, kernel_size: int = 2, stride=None) -> int:
     return conv2d_size_out(size, kernel_size=kernel_size, stride=stride)
 
 
-def image_output_size(size: int,
-                      num_cnn: int,
-                      cnn_kernel_size: int = 5,
-                      cnn_stride: int = 1,
-                      max_pool: bool = True,
-                      maxpool_kernel_size: int = 2,
-                      max_pool_stride: int = None):
+def image_output_size(
+    size: int,
+    num_cnn: int,
+    cnn_kernel_size: int = 5,
+    cnn_stride: int = 1,
+    max_pool: bool = True,
+    maxpool_kernel_size: int = 2,
+    max_pool_stride: int = None,
+):
     """
     Get output size of multiple cnn-maxpool layers
     Args:
@@ -301,33 +308,34 @@ def image_output_size(size: int,
     for _ in range(num_cnn):
         size = conv2d_size_out(size, cnn_kernel_size, cnn_stride)
         if max_pool:
-            size = maxpool2d_size_out(size, maxpool_kernel_size,
-                                      max_pool_stride)
+            size = maxpool2d_size_out(size, maxpool_kernel_size, max_pool_stride)
 
     return size
 
 
-def get_item_from_dicts(dicts: Iterable[Dict], key: str,
-                        process: Callable = lambda x: x):
-    """
-    return the values from a lot of dictionaries
+# def get_item_from_dicts(dicts: Iterable[Dict], key: str,
+#                         process: Callable = lambda x: x):
+#     """
+#     return the values from a lot of dictionaries
 
-    Args:
-        dicts: a lot of dictionaries in an iterable container
-        key: key to use
-        process: process function applied to the value
+#     Args:
+#         dicts: a lot of dictionaries in an iterable container
+#         key: key to use
+#         process: process function applied to the value
 
-    Returns:
-        referenced values from all dictionaries
-    """
-    values = []
-    for dictionary in dicts:
-        if key in dictionary.keys():
-            values.append(process(dictionary[key]))
-    return values
+#     Returns:
+#         referenced values from all dictionaries
+#     """
+#     values = []
+#     for dictionary in dicts:
+#         if key in dictionary.keys():
+#             values.append(process(dictionary[key]))
+#     return values
 
-def get_item_from_dicts(dicts: Iterable[Dict], key: str, 
-                        process: Callable = lambda x: x) -> list:
+
+def get_item_from_dicts(
+    dicts: Iterable[Dict], key: str, process: Callable = lambda x: x
+) -> list:
     """
     Return the values from a collection of dictionaries, including nested dictionaries.
 
@@ -339,6 +347,7 @@ def get_item_from_dicts(dicts: Iterable[Dict], key: str,
     Returns:
         A list of processed values corresponding to the specified key.
     """
+
     def search_in_dict(d: Dict, key: str) -> list:
         """
         Recursively search for the key in the dictionary and return values.
@@ -354,8 +363,12 @@ def get_item_from_dicts(dicts: Iterable[Dict], key: str,
         for k, v in d.items():
             if k == key:
                 results.append(process(v))
+                break
             elif isinstance(v, dict):
-                results.extend(search_in_dict(v, key))
+                value = search_in_dict(v, key)
+                if value != []:
+                    results.extend(value)
+                    break
         return results
 
     values = []
@@ -363,7 +376,6 @@ def get_item_from_dicts(dicts: Iterable[Dict], key: str,
         if isinstance(dictionary, dict):
             values.extend(search_in_dict(dictionary, key))
     return values
-
 
 
 def assert_shape(data, shape: list):

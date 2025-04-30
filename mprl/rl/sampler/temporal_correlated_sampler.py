@@ -113,12 +113,12 @@ class TemporalCorrelatedSampler(BlackBoxSampler):
         # Training or evaluation
         if training:
             assert deterministic is False and render is False
-            envs = self.train_envs
+            envs = envs = self.get_envs("training")
             episode_init_state = envs.reset()
             num_env = self.num_env_train
             ep_per_env = self.episodes_per_train_env
         else:
-            envs = self.test_envs
+            envs = self.get_envs("testing")
             episode_init_state = envs.reset()
             num_env = self.num_env_test
             if render and num_env == 1:
